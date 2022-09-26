@@ -62,7 +62,8 @@ class User(AbstractUser):
         
 class Categories(models.Model):
     name = models.CharField(
-        'Название категории'
+        'Название категории',
+        max_length=100
     )
     slug = models.SlugField(
         'Слаг категории',
@@ -80,6 +81,7 @@ class Categories(models.Model):
 class Genre(models.Model):
     name = models.CharField(
         'Название жанра',
+        max_length=150
     )
     slug = models.SlugField(
         'Слаг жанра',
@@ -90,13 +92,15 @@ class Genre(models.Model):
 class Title(models.Model):
     name = models.CharField(
         'Название произведения',
+        max_length=150
     )
     year = models.IntegerField(
         'Год выпуска произведения',
     )
     category = models.ForeignKey(
         Categories,
-        on_delete=models.SET_NULL,
+        null=True,
+        on_delete=models.CASCADE,
         verbose_name='Категория произведения'
     )
     genre = models.ManyToManyField(

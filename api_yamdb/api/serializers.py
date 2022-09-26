@@ -1,8 +1,11 @@
+from django.db.migrations import serializer
 from django.db.models import Avg
+from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueValidator
+from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import Comment, Reviews, User
 
 
@@ -85,4 +88,3 @@ class RegisterDataSerializer(serializers.ModelSerializer):
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField()
     confirmation_code = serializers.CharField()
-
