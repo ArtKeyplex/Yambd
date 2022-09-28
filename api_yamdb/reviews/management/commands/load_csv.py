@@ -4,10 +4,10 @@ from csv import DictReader
 from django.core.management import BaseCommand
 
 from reviews.models import (
-    Category,
+    Categories,
     Comment,
     Genre,
-    Genre_title,
+    Genre,
     Title,
     Reviews,
     User,
@@ -27,10 +27,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         file_names = {
             'users': User,
-            'category': Category,
+            'category': Categories,
             'titles': Title,
             'genre': Genre,
-            'genre_title': Genre_title,
+            'genre_title': Genre,
             'review': Reviews,
             'comments': Comment,
         }
