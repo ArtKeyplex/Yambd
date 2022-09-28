@@ -55,7 +55,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class ReviewsViewSet(viewsets.ModelViewSet):
-    queryset = Reviews.objects.all()
     serializer_class = ReviewsSerializer
     permission_classes = [IsAuthorOrReadOnly, ]
     pagination_class = PageNumberPagination
