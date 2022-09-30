@@ -35,7 +35,7 @@ class User(AbstractUser):
         null=True,
         blank=True
     )
-    
+
     @property
     def is_moderator(self):
         return self.role == self.MODERATOR
@@ -59,7 +59,7 @@ class User(AbstractUser):
             )
         ]
 
-        
+
 class Categories(models.Model):
     name = models.CharField(
         'Название категории',
@@ -90,31 +90,24 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    name = models.CharField(
-        'Название произведения',
-        max_length=150
-    )
+    name = models.CharField(verbose_name='Titles', db_index=True, max_length=100)
     year = models.IntegerField(
-        'Год выпуска произведения',
+        verbose_name='Release year',
+        default=None
     )
+    description = models.TextField(verbose_name='Description')
+    genre = models.ManyToManyField(Genre, related_name='genres', blank=True)
     category = models.ForeignKey(
         Categories,
-        null=True,
-        on_delete=models.CASCADE,
-        verbose_name='Категория произведения'
+        on_delete=models.SET_NULL,
+        related_name='categories',
+        blank=True,
+        null=True
     )
-    genre = models.ManyToManyField(
-        Genre,
-        related_name='titles',
-        verbose_name='Жанр произведения'
-    )
+    rating = models.IntegerField(null=True, default=None)
 
     class Meta:
-        verbose_name = 'Произведение'
-        verbose_name_plural = 'Произведения'
-
-    def __str__(self) -> str:
-        return self.name
+        ordering = ['-id']
 
 
 class Reviews(models.Model):
