@@ -14,7 +14,8 @@ class TitlesFilter(filters.FilterSet):
         field_name='year',
     )
     name = filters.CharFilter(
-        lookup_expr="name",
+        field_name='name',
+        lookup_expr='icontains'
     )
 
     class Meta:
