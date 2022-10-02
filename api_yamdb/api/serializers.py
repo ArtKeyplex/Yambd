@@ -1,16 +1,17 @@
-from django.db.migrations import serializer
-from django.db.models import Avg
-
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueValidator
-from reviews.models import Comment, Reviews, User, Categories, Genre, Title
+from reviews.models import Comment, Review, User, Categories, Genre, Title
 
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username'
+    )
+    review = SlugRelatedField(
+        slug_field='id',
+        read_only=True
     )
 
     class Meta:
@@ -22,16 +23,31 @@ class CommentSerializer(serializers.ModelSerializer):
 class ReviewsSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(
         slug_field='username',
+        default=serializers.CurrentUserDefault(),
         read_only=True
     )
-    rating = serializers.SerializerMethodField()
-
-    def get_rating(self, ob):
-        return ob.reviews.all().aggregate(Avg('score'))
+    title = SlugRelatedField(
+        slug_field='id',
+        read_only=True
+    )
 
     class Meta:
         fields = '__all__'
-        model = Reviews
+        model = Review
+        read_only_fields = ['title']
+
+    def validate(self, data):
+        if self.context['request'].method != 'POST':
+            return data
+        title_id = (
+            self.context['request'].parser_context['kwargs']['title_id']
+        )
+        user = self.context['request'].user
+        if user.reviews.filter(title_id=title_id).exists():
+            raise serializers.ValidationError(
+                'Нельзя оставить отзыв на одно произведение дважды'
+            )
+        return data
 
 
 class UserSerializer(serializers.ModelSerializer):

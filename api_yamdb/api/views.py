@@ -8,9 +8,10 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 from .filters import TitlesFilter
-from reviews.models import Categories, Genre, Reviews, Title, User
+from reviews.models import Categories, Genre, Review, Title, User
 
-from api.permissions import IsAdmin, IsAdminOrReadOnly, IsAuthorOrReadOnly
+from api.permissions import (IsAdmin, IsAdminOrReadOnly,
+                             IsAuthorOrModeratorOrReadOnly)
 from api.serializers import (CategoriesSerializer, CommentSerializer,
                              GenreSerializer, RegisterDataSerializer,
                              ReviewsSerializer, TitlePostSerializer,
@@ -93,7 +94,10 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class ReviewsViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewsSerializer
-    permission_classes = [IsAuthorOrReadOnly, ]
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsAuthorOrModeratorOrReadOnly,
+    ]
     pagination_class = PageNumberPagination
 
     def get_title(self):
@@ -114,12 +118,15 @@ class ReviewsViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthorOrReadOnly, ]
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsAuthorOrModeratorOrReadOnly,
+    ]
     pagination_class = PageNumberPagination
 
     def get_review(self):
         return get_object_or_404(
-            Reviews,
+            Review,
             id=self.kwargs['review_id']
         )
 
@@ -176,4 +183,3 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.action in ('list', 'retrieve'):
             return TitleSerializer
         return TitlePostSerializer
-

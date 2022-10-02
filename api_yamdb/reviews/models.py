@@ -90,7 +90,11 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    name = models.CharField(verbose_name='Titles', db_index=True, max_length=100)
+    name = models.CharField(
+        verbose_name='Titles',
+        db_index=True,
+        max_length=100
+    )
     year = models.IntegerField(
         verbose_name='Release year',
         default=None
@@ -110,7 +114,7 @@ class Title(models.Model):
         ordering = ['-id']
 
 
-class Reviews(models.Model):
+class Review(models.Model):
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
@@ -129,6 +133,7 @@ class Reviews(models.Model):
     pub_date = models.DateTimeField(
         'Дата отзыва',
         auto_now_add=True,
+        db_index=True
     )
     score = models.IntegerField(
         default=0,
@@ -137,17 +142,17 @@ class Reviews(models.Model):
             MinValueValidator(1)
         ]
     )
-    constraints = [
-        models.UniqueConstraint(
-            fields=['author', ],
-            name='unique_follow'
-        )
-    ]
 
     class Meta:
-        ordering = ('-pub_date',)
+        ordering = ['-pub_date']
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'title'],
+                name='unique_follow'
+            )
+        ]
 
     def __str__(self):
         return self.text[:15]
@@ -155,7 +160,7 @@ class Reviews(models.Model):
 
 class Comment(models.Model):
     review = models.ForeignKey(
-        Reviews(),
+        Review(),
         on_delete=models.CASCADE,
         related_name='comments',
     )
