@@ -91,15 +91,15 @@ class Genre(models.Model):
 
 class Title(models.Model):
     name = models.CharField(
-        verbose_name='Titles',
+        verbose_name='Название произведения',
         db_index=True,
         max_length=100
     )
     year = models.IntegerField(
-        verbose_name='Release year',
+        verbose_name='Дата релиза',
         default=None
     )
-    description = models.TextField(verbose_name='Description')
+    description = models.TextField(verbose_name='Описание произведения')
     genre = models.ManyToManyField(Genre, related_name='genres', blank=True)
     category = models.ForeignKey(
         Categories,
@@ -108,7 +108,6 @@ class Title(models.Model):
         blank=True,
         null=True
     )
-    rating = models.IntegerField(null=True, default=None)
 
     class Meta:
         ordering = ['-id']
