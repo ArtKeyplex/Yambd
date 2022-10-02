@@ -1,12 +1,10 @@
 from django.db.migrations import serializer
 from django.db.models import Avg
-from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueValidator
-from rest_framework_simplejwt.tokens import RefreshToken
-from reviews.models import Comment, Reviews, User
+from reviews.models import Comment, Reviews, User, Categories, Genre, Title
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -88,3 +86,40 @@ class RegisterDataSerializer(serializers.ModelSerializer):
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField()
     confirmation_code = serializers.CharField()
+
+
+class CategoriesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Categories
+        fields = ('name', 'slug')
+        lookup_field = 'slug'
+
+
+class GenreSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Genre
+        fields = ('name', 'slug',)
+        lookup_field = 'slug'
+
+
+class TitleSerializer(serializers.ModelSerializer):
+    genre = GenreSerializer(many=True, read_only=True)
+    category = CategoriesSerializer(read_only=True)
+
+    class Meta:
+        fields = '__all__'
+        model = Title
+
+
+class TitlePostSerializer(serializers.ModelSerializer):
+    genre = serializers.SlugRelatedField(slug_field='slug',
+                                         many=True,
+                                         queryset=Genre.objects.all())
+    category = serializers.SlugRelatedField(slug_field='slug',
+                                            queryset=Categories.objects.all())
+
+    class Meta:
+        fields = '__all__'
+        model = Title
