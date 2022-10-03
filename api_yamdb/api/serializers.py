@@ -125,7 +125,8 @@ class TitleSerializer(serializers.ModelSerializer):
     category = CategoriesSerializer(read_only=True)
 
     class Meta:
-        fields = '__all__'
+        fields = ('id', 'name', 'description', 'category',
+                  'genre', 'year', 'rating')
         model = Title
 
 
