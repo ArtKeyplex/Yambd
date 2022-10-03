@@ -120,7 +120,7 @@ class GenreSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
 
 
-class TitleSerializer(serializers.ModelSerializer):
+class TitleReadSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True, read_only=True)
     category = CategoriesSerializer(read_only=True)
     rating = serializers.IntegerField(read_only=True)
@@ -130,7 +130,7 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title
 
 
-class TitlePostSerializer(serializers.ModelSerializer):
+class TitleWriteSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(slug_field='slug',
                                          many=True,
                                          queryset=Genre.objects.all())

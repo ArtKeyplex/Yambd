@@ -10,9 +10,6 @@ class TitlesFilter(filters.FilterSet):
     category = filters.CharFilter(
         field_name='category__slug',
     )
-    year = filters.NumberFilter(
-        field_name='year',
-    )
     name = filters.CharFilter(
         field_name='name',
         lookup_expr='icontains'
